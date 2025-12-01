@@ -58,6 +58,19 @@ variable "reuse_eips" {
   }
 }
 
+variable "private_route_table_ids" {
+  description = "List of private route table IDs that need routes to NAT Gateway. If single_nat_gateway is true, all route tables will point to the same NAT. If false, routes are distributed across NAT Gateways (round-robin by AZ)."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for id in var.private_route_table_ids : can(regex("^rtb-", id))
+    ])
+    error_message = "All route table IDs must start with 'rtb-'."
+  }
+}
+
 variable "tags" {
   description = "Additional tags for all resources"
   type        = map(string)

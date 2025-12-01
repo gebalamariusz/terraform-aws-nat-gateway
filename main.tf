@@ -62,3 +62,17 @@ resource "aws_nat_gateway" "this" {
   depends_on = [aws_eip.this]
 }
 
+# ------------------------------------------------------------------------------
+# ROUTES TO NAT GATEWAY
+# ------------------------------------------------------------------------------
+
+resource "aws_route" "nat" {
+  count = length(var.private_route_table_ids)
+
+  route_table_id         = var.private_route_table_ids[count.index]
+  destination_cidr_block = "0.0.0.0/0"
+
+  # If single NAT, all routes go to first NAT; otherwise distribute round-robin
+  nat_gateway_id = var.single_nat_gateway ? aws_nat_gateway.this[0].id : aws_nat_gateway.this[count.index % local.nat_gateway_count].id
+}
+
