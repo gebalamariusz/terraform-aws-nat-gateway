@@ -62,16 +62,3 @@ resource "aws_nat_gateway" "this" {
   depends_on = [aws_eip.this]
 }
 
-# ------------------------------------------------------------------------------
-# ROUTES (0.0.0.0/0 -> NAT Gateway for private subnets)
-# ------------------------------------------------------------------------------
-
-resource "aws_route" "private_nat" {
-  count = length(var.private_route_table_ids)
-
-  route_table_id         = var.private_route_table_ids[count.index]
-  destination_cidr_block = "0.0.0.0/0"
-
-  # If single NAT, all routes point to it. If HA, distribute routes across NAT Gateways.
-  nat_gateway_id = var.single_nat_gateway ? aws_nat_gateway.this[0].id : aws_nat_gateway.this[count.index % local.nat_gateway_count].id
-}

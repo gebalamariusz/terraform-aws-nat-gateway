@@ -1,6 +1,6 @@
 # terraform-aws-nat-gateway
 
-Terraform module to create NAT Gateways with Elastic IPs and routes for private subnets.
+Terraform module to create NAT Gateways with Elastic IPs.
 
 This module is designed to work seamlessly with [terraform-aws-vpc](https://github.com/gebalamariusz/terraform-aws-vpc) and [terraform-aws-subnets](https://github.com/gebalamariusz/terraform-aws-subnets) modules.
 
@@ -11,16 +11,15 @@ terraform-aws-vpc          -> VPC, IGW
         |
 terraform-aws-subnets      -> Subnets, Route Tables, IGW routes (public)
         |
-terraform-aws-nat-gateway  -> NAT, EIP, routes 0.0.0.0/0 -> NAT (private)  <-- This module
+terraform-aws-nat-gateway  -> NAT, EIP  <-- This module
         |
-terraform-aws-routes       -> Custom routes (TGW, VPC Peering, VPN, etc.)
+terraform-aws-routes       -> Routes (0.0.0.0/0 -> NAT, TGW, VPC Peering, VPN, etc.)
 ```
 
 ## Features
 
 - Creates NAT Gateways with Elastic IPs
 - Supports single NAT Gateway (cost savings) or one per AZ (high availability)
-- Automatically adds 0.0.0.0/0 routes to private route tables
 - Option to reuse existing Elastic IPs
 - Consistent naming and tagging conventions
 
@@ -60,11 +59,11 @@ module "nat_gateway" {
   name        = "my-app"
   environment = "prod"
 
-  public_subnet_ids       = module.subnets.public_subnet_ids
-  private_route_table_ids = [module.subnets.route_table_ids_by_tier["private"]]
-
+  public_subnet_ids  = module.subnets.public_subnet_ids
   single_nat_gateway = false  # One NAT per AZ for HA
 }
+
+# Routes are added via terraform-aws-routes module (or manually)
 ```
 
 ### Single NAT Gateway (cost savings for non-prod)
@@ -77,10 +76,8 @@ module "nat_gateway" {
   name        = "my-app"
   environment = "dev"
 
-  public_subnet_ids       = module.subnets.public_subnet_ids
-  private_route_table_ids = [module.subnets.route_table_ids_by_tier["private"]]
-
-  single_nat_gateway = true  # Save ~$30/month per NAT
+  public_subnet_ids  = module.subnets.public_subnet_ids
+  single_nat_gateway = true  # Save ~$32/month per NAT
 }
 ```
 
@@ -94,9 +91,7 @@ module "nat_gateway" {
   name        = "my-app"
   environment = "prod"
 
-  public_subnet_ids       = module.subnets.public_subnet_ids
-  private_route_table_ids = [module.subnets.route_table_ids_by_tier["private"]]
-
+  public_subnet_ids  = module.subnets.public_subnet_ids
   single_nat_gateway = false
   reuse_eips         = ["eipalloc-abc123", "eipalloc-def456"]
 }
@@ -108,7 +103,6 @@ module "nat_gateway" {
 |------|-------------|------|---------|:--------:|
 | name | Name prefix for all resources | `string` | n/a | yes |
 | public_subnet_ids | List of public subnet IDs where NAT Gateways will be created | `list(string)` | n/a | yes |
-| private_route_table_ids | List of private route table IDs where 0.0.0.0/0 -> NAT route will be added | `list(string)` | n/a | yes |
 | environment | Environment name (used in naming/tagging if provided) | `string` | `""` | no |
 | single_nat_gateway | If true, creates only one NAT Gateway (cost savings). If false, creates one per public subnet (HA). | `bool` | `false` | no |
 | reuse_eips | List of existing Elastic IP allocation IDs to reuse | `list(string)` | `[]` | no |
@@ -123,7 +117,6 @@ module "nat_gateway" {
 | nat_gateway_private_ips | List of private IP addresses associated with NAT Gateways |
 | eip_ids | List of Elastic IP allocation IDs (empty if reusing existing EIPs) |
 | eip_public_ips | List of Elastic IP public addresses (empty if reusing existing EIPs) |
-| route_ids | List of route IDs created for private subnets |
 | nat_gateway_count | Number of NAT Gateways created |
 | is_single_nat | Whether a single NAT Gateway is used |
 

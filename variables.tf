@@ -29,18 +29,6 @@ variable "public_subnet_ids" {
   }
 }
 
-variable "private_route_table_ids" {
-  description = "List of private route table IDs where 0.0.0.0/0 -> NAT route will be added. Use output 'route_table_ids_by_tier[\"private\"]' from terraform-aws-subnets module."
-  type        = list(string)
-
-  validation {
-    condition = alltrue([
-      for id in var.private_route_table_ids : can(regex("^rtb-", id))
-    ])
-    error_message = "All route table IDs must start with 'rtb-'."
-  }
-}
-
 # ------------------------------------------------------------------------------
 # OPTIONAL VARIABLES
 # ------------------------------------------------------------------------------
