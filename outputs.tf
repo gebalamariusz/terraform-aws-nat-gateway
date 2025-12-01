@@ -44,3 +44,12 @@ output "is_single_nat" {
   description = "Whether a single NAT Gateway is used (true) or one per AZ (false)"
   value       = var.single_nat_gateway
 }
+
+# ------------------------------------------------------------------------------
+# ROUTE OUTPUTS
+# ------------------------------------------------------------------------------
+
+output "route_ids" {
+  description = "List of route IDs created for private route tables"
+  value       = aws_route.nat[*].id
+}
