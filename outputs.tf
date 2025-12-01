@@ -45,11 +45,3 @@ output "is_single_nat" {
   value       = var.single_nat_gateway
 }
 
-# ------------------------------------------------------------------------------
-# ROUTE OUTPUTS
-# ------------------------------------------------------------------------------
-
-output "route_ids" {
-  description = "List of route IDs created for private route tables"
-  value       = aws_route.nat[*].id
-}
