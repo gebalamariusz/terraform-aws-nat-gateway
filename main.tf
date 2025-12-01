@@ -16,10 +16,10 @@ locals {
   )
 
   # Determine how many NAT Gateways to create
-  nat_gateway_count = var.single_nat_gateway ? 1 : length(var.public_subnet_ids)
+  nat_gateway_count = var.single_nat_gateway ? 1 : length(var.subnet_ids)
 
   # Subnet IDs for NAT Gateways (first one if single, all if HA)
-  nat_subnet_ids = var.single_nat_gateway ? [var.public_subnet_ids[0]] : var.public_subnet_ids
+  nat_subnet_ids = var.single_nat_gateway ? [var.subnet_ids[0]] : var.subnet_ids
 
   # Whether to create new EIPs or reuse existing ones
   create_eips = length(var.reuse_eips) == 0

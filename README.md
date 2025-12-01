@@ -59,7 +59,7 @@ module "nat_gateway" {
   name        = "my-app"
   environment = "prod"
 
-  public_subnet_ids  = module.subnets.public_subnet_ids
+  subnet_ids         = module.subnets.subnet_ids_by_tier["public"]
   single_nat_gateway = false  # One NAT per AZ for HA
 }
 
@@ -76,7 +76,7 @@ module "nat_gateway" {
   name        = "my-app"
   environment = "dev"
 
-  public_subnet_ids  = module.subnets.public_subnet_ids
+  subnet_ids         = module.subnets.subnet_ids_by_tier["public"]
   single_nat_gateway = true  # Save ~$32/month per NAT
 }
 ```
@@ -91,7 +91,7 @@ module "nat_gateway" {
   name        = "my-app"
   environment = "prod"
 
-  public_subnet_ids  = module.subnets.public_subnet_ids
+  subnet_ids         = module.subnets.subnet_ids_by_tier["public"]
   single_nat_gateway = false
   reuse_eips         = ["eipalloc-abc123", "eipalloc-def456"]
 }
@@ -102,9 +102,9 @@ module "nat_gateway" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | name | Name prefix for all resources | `string` | n/a | yes |
-| public_subnet_ids | List of public subnet IDs where NAT Gateways will be created | `list(string)` | n/a | yes |
+| subnet_ids | List of subnet IDs where NAT Gateways will be created (must have route to IGW) | `list(string)` | n/a | yes |
 | environment | Environment name (used in naming/tagging if provided) | `string` | `""` | no |
-| single_nat_gateway | If true, creates only one NAT Gateway (cost savings). If false, creates one per public subnet (HA). | `bool` | `false` | no |
+| single_nat_gateway | If true, creates only one NAT Gateway (cost savings). If false, creates one per subnet (HA). | `bool` | `false` | no |
 | reuse_eips | List of existing Elastic IP allocation IDs to reuse | `list(string)` | `[]` | no |
 | tags | Additional tags for all resources | `map(string)` | `{}` | no |
 

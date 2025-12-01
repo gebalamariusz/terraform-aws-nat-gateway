@@ -12,18 +12,18 @@ variable "name" {
   }
 }
 
-variable "public_subnet_ids" {
-  description = "List of public subnet IDs where NAT Gateways will be created. Use output 'public_subnet_ids' from terraform-aws-subnets module."
+variable "subnet_ids" {
+  description = "List of subnet IDs where NAT Gateways will be created. These should be subnets with route to Internet Gateway."
   type        = list(string)
 
   validation {
-    condition     = length(var.public_subnet_ids) > 0
-    error_message = "At least one public subnet ID is required."
+    condition     = length(var.subnet_ids) > 0
+    error_message = "At least one subnet ID is required."
   }
 
   validation {
     condition = alltrue([
-      for id in var.public_subnet_ids : can(regex("^subnet-", id))
+      for id in var.subnet_ids : can(regex("^subnet-", id))
     ])
     error_message = "All subnet IDs must start with 'subnet-'."
   }
@@ -40,7 +40,7 @@ variable "environment" {
 }
 
 variable "single_nat_gateway" {
-  description = "If true, creates only one NAT Gateway in the first public subnet (cost savings for non-prod). If false, creates one NAT Gateway per public subnet (HA for prod)."
+  description = "If true, creates only one NAT Gateway in the first subnet (cost savings for non-prod). If false, creates one NAT Gateway per subnet (HA for prod)."
   type        = bool
   default     = false
 }
