@@ -1,4 +1,10 @@
-# terraform-aws-nat-gateway
+# AWS NAT Gateway Terraform Module
+
+[![Terraform Registry](https://img.shields.io/badge/Terraform%20Registry-gebalamariusz%2Fnat--gateway%2Faws-blue?logo=terraform)](https://registry.terraform.io/modules/gebalamariusz/nat-gateway/aws)
+[![CI](https://github.com/gebalamariusz/terraform-aws-nat-gateway/actions/workflows/ci.yml/badge.svg)](https://github.com/gebalamariusz/terraform-aws-nat-gateway/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/gebalamariusz/terraform-aws-nat-gateway?display_name=tag&sort=semver)](https://github.com/gebalamariusz/terraform-aws-nat-gateway/releases)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Terraform](https://img.shields.io/badge/Terraform-%3E%3D1.7-purple.svg)](https://www.terraform.io/)
 
 Terraform module to create NAT Gateways with Elastic IPs.
 
